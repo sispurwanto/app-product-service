@@ -18,7 +18,5 @@ export const environment = {
   },
   // Nomor WhatsApp Admin penerima konsultasi (contoh: 081905453639 atau format internasional 6281905453639)
   adminWhatsApp: "081xxxxxxxxxx",
-  // PIN Keamanan untuk membuka Administrator Access
-  adminPin: "your_secure_admin_pin",
   appName: "WebCare & Custom"
 };

@@ -45,8 +45,8 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.45rem 1.1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
   margin-bottom: 2rem;
   backdrop-filter: blur(8px);
@@ -64,7 +64,7 @@
 .pill-text {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--text-sub);
   letter-spacing: 0.02em;
 }
 
@@ -75,7 +75,8 @@
   letter-spacing: -0.03em;
   line-height: 1.1;
   margin-bottom: 0.85rem;
-  color: #ffffff;
+  color: var(--text-main);
+  transition: color var(--transition-fast);
 }
 
 .gradient-text {
@@ -88,35 +89,39 @@
   font-family: var(--font-heading);
   font-size: 1.55rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-sub);
   margin-bottom: 2.2rem;
   max-width: 800px;
+  transition: color var(--transition-fast);
 }
 
 /* Description Box */
 .hero-description-box {
   max-width: 840px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 1.6rem 2rem;
   margin-bottom: 2.75rem;
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(12px);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .hero-lead {
   font-size: 1.18rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--text-main);
   line-height: 1.5;
   margin-bottom: 0.75rem;
+  transition: color var(--transition-fast);
 }
 
 .hero-body {
   font-size: 1.02rem;
-  color: #94a3b8;
+  color: var(--text-sub);
   line-height: 1.65;
+  transition: color var(--transition-fast);
 }
 
 /* Hero Actions */
@@ -156,16 +161,17 @@
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
 }
 
 .highlight-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: var(--bg-card-hover);
+  border-color: var(--border-glow);
   transform: translateY(-2px);
 }
 
@@ -180,21 +186,21 @@
 }
 
 .highlight-icon.green {
-  background: rgba(37, 211, 102, 0.12);
-  color: #25d366;
-  border: 1px solid rgba(37, 211, 102, 0.25);
+  background: rgba(37, 211, 102, 0.15);
+  color: var(--accent-wa);
+  border: 1px solid rgba(37, 211, 102, 0.3);
 }
 
 .highlight-icon.blue {
-  background: rgba(14, 165, 233, 0.12);
-  color: #38bdf8;
-  border: 1px solid rgba(14, 165, 233, 0.25);
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--text-highlight);
+  border: 1px solid rgba(14, 165, 233, 0.3);
 }
 
 .highlight-icon.amber {
-  background: rgba(245, 158, 11, 0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .highlight-text {
@@ -205,14 +211,16 @@
 
 .highlight-text strong {
   font-size: 0.95rem;
-  color: #f1f5f9;
-  font-weight: 600;
+  color: var(--text-main);
+  font-weight: 700;
+  transition: color var(--transition-fast);
 }
 
 .highlight-text span {
   font-size: 0.82rem;
-  color: #94a3b8;
-  line-height: 1.4;
+  color: var(--text-sub);
+  line-height: 1.45;
+  transition: color var(--transition-fast);
 }
 
 @media (max-width: 900px) {

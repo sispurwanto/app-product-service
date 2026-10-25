@@ -8,7 +8,6 @@ import {
   User
 } from 'firebase/auth';
 import { FirebaseService } from './firebase.service';
-import { environment } from '../../environments/environment';
 
 export interface AdminUserData {
   email: string;
@@ -28,8 +27,6 @@ export class AuthService {
   public isLoading = signal<boolean>(false);
   public authError = signal<string>('');
 
-  private readonly STORAGE_DEMO_AUTH = 'webcare_demo_admin_auth';
-
   constructor() {
     this.initAuth();
   }
@@ -47,35 +44,20 @@ export class AuthService {
               isFirebaseUser: true
             });
           } else {
-            // Check if demo auth exists
-            this.checkDemoAuth();
+            this.currentUser.set(null);
           }
         });
       } catch (err) {
         console.warn('Firebase Auth initialization warning:', err);
-        this.checkDemoAuth();
+        this.currentUser.set(null);
       }
     } else {
-      this.checkDemoAuth();
+      this.currentUser.set(null);
     }
-  }
-
-  private checkDemoAuth(): void {
-    if (typeof window !== 'undefined' && window.sessionStorage) {
-      const demoEmail = sessionStorage.getItem(this.STORAGE_DEMO_AUTH);
-      if (demoEmail) {
-        this.currentUser.set({
-          email: demoEmail,
-          isFirebaseUser: false
-        });
-        return;
-      }
-    }
-    this.currentUser.set(null);
   }
 
   /**
-   * Login with Email and Password
+   * Login with Firebase Authentication Email and Password
    */
   public async login(email: string, pass: string): Promise<{ success: boolean; error?: string }> {
     this.isLoading.set(true);
@@ -98,45 +80,29 @@ export class AuthService {
       } catch (e) { }
     }
 
-    // Path 1: Live Firebase Authentication
-    if (this.auth && this.firebaseService.isConnected()) {
-      try {
-        const userCredential = await signInWithEmailAndPassword(this.auth, cleanEmail, cleanPass);
-        const user = userCredential.user;
-        this.currentUser.set({
-          email: user.email || cleanEmail,
-          uid: user.uid,
-          isFirebaseUser: true
-        });
-        this.isLoading.set(false);
-        return { success: true };
-      } catch (err: any) {
-        console.error('Firebase Auth Login Error:', err);
-        const translatedError = this.translateFirebaseError(err.code || err.message);
-        this.authError.set(translatedError);
-        this.isLoading.set(false);
-        return { success: false, error: translatedError };
-      }
-    }
-
-    // Path 2: Demo / Offline Fallback (if Firebase Auth is not yet configured or offline)
-    const targetPin = environment.adminPin || 'webcare2026';
-    if (cleanPass === targetPin || cleanPass === 'admin123' || cleanPass === 'webcare2026') {
-      const demoUser: AdminUserData = {
-        email: cleanEmail,
-        isFirebaseUser: false
-      };
-      this.currentUser.set(demoUser);
-      if (typeof window !== 'undefined' && window.sessionStorage) {
-        sessionStorage.setItem(this.STORAGE_DEMO_AUTH, cleanEmail);
-      }
-      this.isLoading.set(false);
-      return { success: true };
-    } else {
-      const err = 'Password admin salah. (Jika mode demo, gunakan password: ' + targetPin + ')';
+    if (!this.auth || !this.firebaseService.isConnected()) {
+      const err = 'Layanan Firebase Authentication belum terhubung. Periksa konfigurasi Firebase dan koneksi internet.';
       this.authError.set(err);
       this.isLoading.set(false);
       return { success: false, error: err };
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(this.auth, cleanEmail, cleanPass);
+      const user = userCredential.user;
+      this.currentUser.set({
+        email: user.email || cleanEmail,
+        uid: user.uid,
+        isFirebaseUser: true
+      });
+      this.isLoading.set(false);
+      return { success: true };
+    } catch (err: any) {
+      console.error('Firebase Auth Login Error:', err);
+      const translatedError = this.translateFirebaseError(err.code || err.message);
+      this.authError.set(translatedError);
+      this.isLoading.set(false);
+      return { success: false, error: translatedError };
     }
   }
 
@@ -144,16 +110,12 @@ export class AuthService {
    * Logout Admin session
    */
   public async logout(): Promise<void> {
-    if (this.auth && this.currentUser()?.isFirebaseUser) {
+    if (this.auth) {
       try {
         await signOut(this.auth);
       } catch (e) {
         console.warn('Sign out warning:', e);
       }
-    }
-
-    if (typeof window !== 'undefined' && window.sessionStorage) {
-      sessionStorage.removeItem(this.STORAGE_DEMO_AUTH);
     }
 
     this.currentUser.set(null);
@@ -176,7 +138,7 @@ export class AuthService {
       case 'auth/network-request-failed':
         return 'Gagal terhubung ke server. Periksa koneksi internet Anda.';
       case 'auth/operation-not-allowed':
-        return 'Metode Email/Password belum diaktifkan (Authentication → Sign-in method).';
+        return 'Metode Email/Password belum diaktifkan di Firebase Console (Authentication → Sign-in method).';
       default:
         return 'Gagal login: ' + code;
     }

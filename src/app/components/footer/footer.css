@@ -61,7 +61,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 2.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border-subtle);
   gap: 2rem;
   flex-wrap: wrap;
 }
@@ -91,10 +91,11 @@
 }
 
 .footer-brand-title {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.05rem;
   font-family: var(--font-heading);
   letter-spacing: -0.01em;
+  transition: color var(--transition-fast);
 }
 
 .footer-brand-desc {

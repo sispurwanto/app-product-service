@@ -33,6 +33,32 @@ export class HomeComponent {
 
   showTrackerModal = signal<boolean>(false);
   selectedCategoryForForm = signal<string>('Website Repair');
+  showMobileStickyCta = signal<boolean>(false);
+
+  constructor() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', () => {
+        this.updateStickyCtaVisibility();
+      }, { passive: true });
+    }
+  }
+
+  private updateStickyCtaVisibility(): void {
+    if (typeof window === 'undefined') return;
+    const scrollY = window.scrollY || window.pageYOffset;
+    
+    // Check if user is inside or near the consultation form
+    const consultSection = document.getElementById('konsultasi');
+    let isInsideForm = false;
+    if (consultSection) {
+      const rect = consultSection.getBoundingClientRect();
+      // Hide if the form is taking up the center/main viewport area
+      isInsideForm = rect.top <= (window.innerHeight * 0.7) && rect.bottom >= 150;
+    }
+
+    // Show after scrolling past hero (~180px) and hide when inside the form
+    this.showMobileStickyCta.set(scrollY > 180 && !isInsideForm);
+  }
 
   onServiceSelected(category: string): void {
     this.selectedCategoryForForm.set(category);

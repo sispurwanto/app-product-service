@@ -61,11 +61,61 @@
   transform: translateX(0);
 }
 
-@media (max-width: 600px) {
+/* Sticky Floating Mobile CTA Bar */
+.mobile-sticky-cta-bar {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .mobile-sticky-cta-bar {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    padding: 0.65rem 1rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-nav-scrolled);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-subtle);
+    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.35);
+    transform: translateY(120%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+  }
+
+  .mobile-sticky-cta-bar.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .btn-sticky-mobile {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 18px rgba(6, 182, 212, 0.35);
+    text-decoration: none;
+  }
+
+  /* Lift Floating WA button when sticky bar is active on mobile so no overlap */
   .floating-wa-btn {
     bottom: 1.25rem;
     right: 1.25rem;
     width: 52px;
     height: 52px;
+    transition: bottom 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .floating-wa-btn.lifted {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
