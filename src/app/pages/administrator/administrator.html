@@ -1,0 +1,403 @@
+<div class="admin-page-container">
+  <!-- Top Navigation Header -->
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-brand">
+        <a routerLink="/" class="brand-link" title="Ke Beranda WebCare">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <span class="brand-title">WebCare <span class="highlight">Admin Portal</span></span>
+            <span class="admin-tag">Internal Access</span>
+          </div>
+        </a>
+
+        <!-- Live Database Badge -->
+        <!-- <div class="db-indicator" [class.connected]="firebaseService.isConnected()" [title]="firebaseService.statusMessage()">
+          <span class="indicator-dot"></span>
+          <span>Firestore: <code>{{ firebaseService.currentConfig().projectId }}</code></span>
+        </div> -->
+      </div>
+
+      <div class="admin-header-actions">
+        <!-- Return to Public Website -->
+        <a routerLink="/" class="btn-return-home" title="Kembali ke Beranda Depan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Website Utama</span>
+        </a>
+
+        <!-- Theme Selector -->
+        <div class="theme-dropdown-wrap" (click)="$event.stopPropagation()">
+          <button 
+            type="button"
+            (click)="toggleThemeMenu()" 
+            class="btn-theme-toggle" 
+            [title]="'Pilih Tema: ' + themeService.getActiveThemeOption().name">
+            <span>{{ themeService.getActiveThemeOption().icon }}</span>
+            <span>{{ themeService.getActiveThemeOption().name }}</span>
+          </button>
+
+          <div *ngIf="themeMenuOpen" class="theme-menu glass-panel">
+            <button 
+              *ngFor="let t of themeService.themes" 
+              type="button"
+              (click)="selectTheme(t.id)" 
+              class="theme-option-item" 
+              [class.active]="themeService.currentTheme() === t.id">
+              <span>{{ t.icon }}</span>
+              <span>{{ t.name }}</span>
+              <span class="theme-dot" [style.background-color]="t.colorDot"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Logged In Controls -->
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <div class="user-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>{{ authService.currentUser()?.email }}</span>
+          </div>
+
+          <button (click)="refresh()" class="btn-action-refresh" [disabled]="consultService.isLoading()"
+            title="Muat ulang dari database Firestore">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              [class.spinning]="consultService.isLoading()">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Refresh</span>
+          </button>
+
+          <button (click)="handleLogout()" class="btn-action-logout" title="Keluar dari sesi administrator">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Keluar</span>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================= -->
+  <!-- STATE 1: FIREBASE AUTH LOGIN SCREEN                     -->
+  <!-- ======================================================= -->
+  <main *ngIf="!authService.isLoggedIn()" class="auth-wrapper">
+    <div class="auth-card glass-panel">
+      <div class="auth-header">
+        <div class="auth-icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <polyline points="16 11 18 13 22 9"></polyline>
+          </svg>
+        </div>
+        <h1 class="auth-title">Login Administrator</h1>
+        <p class="auth-subtitle">
+          Panel internal pengelolaan tiket konsultasi &amp; respon WhatsApp klien.
+        </p>
+      </div>
+
+      <!-- Auth Error Notification -->
+      <div *ngIf="authService.authError()" class="alert-auth-error">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ authService.authError() }}</span>
+      </div>
+
+      <!-- Login Form -->
+      <form (ngSubmit)="handleLogin()" class="auth-form">
+        <div class="form-group">
+          <label for="adminEmail">Email Administrator</label>
+          <div class="input-with-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <input id="adminEmail" type="email" [(ngModel)]="loginEmail" name="email" placeholder="admin@webcare.com"
+              class="form-control" required autofocus>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <div class="input-with-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input id="adminPassword" type="password" [(ngModel)]="loginPassword" name="password"
+              placeholder="••••••••••••" class="form-control" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-auth-submit" [disabled]="authService.isLoading()">
+          <svg *ngIf="authService.isLoading()" class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" stroke-dasharray="32"
+              stroke-linecap="round" />
+          </svg>
+          <span>{{ authService.isLoading() ? 'Memverifikasi Kredensial...' : 'Masuk ke Administrator' }}</span>
+        </button>
+      </form>
+
+      <!-- Firebase Setup Help Guide -->
+      <!-- <div class="firebase-guide-box">
+        <div class="guide-header">
+          <span class="guide-bulb">💡</span>
+          <strong>Setup Akun di Firebase Console:</strong>
+        </div>
+        <ol class="guide-steps">
+          <li>Buka <code>console.firebase.google.com</code> &rarr; Project: <code>app-product-service</code></li>
+          <li>Menu <strong>Authentication</strong> &rarr; Tab <strong>Users</strong> &rarr; <strong>Add user</strong>
+          </li>
+          <li>Masukkan email &amp; password Anda, lalu gunakan untuk login di halaman ini.</li>
+        </ol>
+      </div> -->
+    </div>
+  </main>
+
+  <!-- ======================================================= -->
+  <!-- STATE 2: UNLOCKED ADMIN DASHBOARD                       -->
+  <!-- ======================================================= -->
+  <main *ngIf="authService.isLoggedIn()" class="admin-dashboard-wrapper">
+    <!-- Dashboard Overview Top Banner -->
+    <div class="dashboard-banner">
+      <div class="banner-text">
+        <h1 class="dashboard-title">Manajemen Tiket Konsultasi</h1>
+        <p class="dashboard-desc">
+          Pantau permohonan masuk, periksa rincian masalah, dan tindak lanjuti langsung dengan membalas pesan WhatsApp
+          klien.
+        </p>
+      </div>
+
+      <!-- Quick Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card" [class.selected]="selectedFilter() === 'all'" (click)="setFilter('all')">
+          <div class="stat-number">{{ totalCount() }}</div>
+          <div class="stat-meta">Semua Tiket</div>
+        </div>
+        <div class="stat-card pending" [class.selected]="selectedFilter() === 'menunggu_balasan'"
+          (click)="setFilter('menunggu_balasan')">
+          <div class="stat-number">{{ pendingCount() }}</div>
+          <div class="stat-meta">Perlu Balas WA</div>
+        </div>
+        <div class="stat-card replied" [class.selected]="selectedFilter() === 'dibalas_wa'"
+          (click)="setFilter('dibalas_wa')">
+          <div class="stat-number">{{ repliedCount() }}</div>
+          <div class="stat-meta">Sudah Dibalas</div>
+        </div>
+        <div class="stat-card analysis" [class.selected]="selectedFilter() === 'dalam_analisis'"
+          (click)="setFilter('dalam_analisis')">
+          <div class="stat-number">{{ analysisCount() }}</div>
+          <div class="stat-meta">Dalam Analisis</div>
+        </div>
+        <div class="stat-card completed" [class.selected]="selectedFilter() === 'selesai'"
+          (click)="setFilter('selesai')">
+          <div class="stat-number">{{ completedCount() }}</div>
+          <div class="stat-meta">Selesai</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="controls-bar">
+      <!-- Search Box -->
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="onSearchChange($event)"
+          placeholder="Cari nama klien, nomor tiket (#WC-...), atau nomor WA..." class="search-input">
+        <button *ngIf="searchQuery()" (click)="clearSearch()" class="clear-search">&times;</button>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab" [class.active]="selectedFilter() === 'all'" (click)="setFilter('all')">
+          Semua ({{ totalCount() }})
+        </button>
+        <button class="filter-tab warning" [class.active]="selectedFilter() === 'menunggu_balasan'"
+          (click)="setFilter('menunggu_balasan')">
+          Perlu Balas WA ({{ pendingCount() }})
+        </button>
+        <button class="filter-tab" [class.active]="selectedFilter() === 'dibalas_wa'" (click)="setFilter('dibalas_wa')">
+          Sudah Dibalas ({{ repliedCount() }})
+        </button>
+        <button class="filter-tab" [class.active]="selectedFilter() === 'dalam_analisis'"
+          (click)="setFilter('dalam_analisis')">
+          Analisis ({{ analysisCount() }})
+        </button>
+        <button class="filter-tab" [class.active]="selectedFilter() === 'selesai'" (click)="setFilter('selesai')">
+          Selesai ({{ completedCount() }})
+        </button>
+      </div>
+    </div>
+
+    <!-- Consultation Requests Stream -->
+    <div class="tickets-container">
+      <!-- Empty State -->
+      <div *ngIf="filteredRequests().length === 0" class="empty-state-card glass-panel">
+        <div class="empty-icon">📭</div>
+        <h3>Tidak Ada Tiket Ditemukan</h3>
+        <p *ngIf="searchQuery()">
+          Tidak ada data yang cocok dengan kata kunci <em>"{{ searchQuery() }}"</em> pada kategori filter ini.
+        </p>
+        <p *ngIf="!searchQuery()">
+          Belum ada tiket konsultasi pada filter ini.
+        </p>
+        <button *ngIf="selectedFilter() !== 'all' || searchQuery()" (click)="setFilter('all'); searchQuery.set('')"
+          class="btn btn-secondary btn-sm" style="margin-top: 1rem;">
+          Tampilkan Semua Tiket
+        </button>
+      </div>
+
+      <!-- Request Cards Grid -->
+      <div *ngFor="let req of filteredRequests()" class="ticket-card glass-panel"
+        [class.urgent-border]="req.urgency === 'tinggi'">
+        <div class="card-head">
+          <div class="client-title-row">
+            <span class="client-name">{{ req.clientName }}</span>
+            <span class="ticket-badge">#{{ req.ticketNumber }}</span>
+            <span class="created-timestamp">{{ formatDate(req.createdAt) }}</span>
+          </div>
+
+          <div class="badges-row">
+            <span class="badge" [ngClass]="getUrgencyBadge(req.urgency)">
+              {{ req.urgency === 'tinggi' ? '🔥 Urgensi Tinggi' : 'Urgensi: ' + req.urgency }}
+            </span>
+            <span class="badge" [ngClass]="getStatusBadge(req.status)">
+              {{ getStatusLabel(req.status) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Phone & Meta Strip -->
+        <div class="meta-strip">
+          <div class="meta-item wa-item">
+            <span class="meta-label">Nomor WhatsApp:</span>
+            <a [href]="'https://wa.me/' + req.whatsappNumber" target="_blank" rel="noopener noreferrer" class="wa-link"
+              title="Buka percakapan WhatsApp">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
+              </svg>
+              <span>+{{ req.whatsappNumber }}</span>
+            </a>
+          </div>
+
+          <div class="meta-item">
+            <span class="meta-label">Kategori Layanan:</span>
+            <span class="category-pill">{{ req.serviceCategory }}</span>
+          </div>
+
+          <div *ngIf="req.websiteUrl" class="meta-item">
+            <span class="meta-label">URL Website:</span>
+            <a [href]="req.websiteUrl.startsWith('http') ? req.websiteUrl : 'https://' + req.websiteUrl" target="_blank"
+              rel="noopener noreferrer" class="url-link">
+              🔗 {{ req.websiteUrl }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Issue Content Body -->
+        <div class="issue-body">
+          <h4 class="issue-title">"{{ req.issueSummary }}"</h4>
+          <p class="issue-description">{{ req.issueDetail }}</p>
+
+          <div *ngIf="req.techStack" class="tech-box">
+            <span class="tech-label">Platform / Stack:</span>
+            <code>{{ req.techStack }}</code>
+          </div>
+        </div>
+
+        <!-- Action Bottom Bar -->
+        <div class="card-footer-actions">
+          <div class="status-action-group">
+            <label class="action-label" for="status-{{ req.ticketNumber }}">Status Tiket:</label>
+            <select id="status-{{ req.ticketNumber }}" [ngModel]="req.status"
+              (ngModelChange)="onUpdateStatus(req, $event)" class="status-select">
+              <option value="menunggu_balasan">Menunggu Balasan WA</option>
+              <option value="dibalas_wa">Sudah Dibalas di WA</option>
+              <option value="dalam_analisis">Dalam Analisis Teknis</option>
+              <option value="kesepakatan">Kesepakatan &amp; Jadwal</option>
+              <option value="selesai">Selesai</option>
+            </select>
+          </div>
+
+          <!-- Direct WhatsApp Reply Button -->
+          <a [href]="getReplyWaUrl(req)" target="_blank" rel="noopener noreferrer" (click)="onReplyClicked(req)"
+            class="btn-wa-reply" title="Klik untuk membuka WhatsApp dengan pesan tindak lanjut otomatis">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
+            </svg>
+            <span>Balas ke WhatsApp Klien</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Pagination Controls Bar -->
+      <div *ngIf="filteredRequests().length > 0" class="pagination-bar glass-panel">
+        <div class="pagination-info">
+          <span>Menampilkan <strong>{{ filteredRequests().length }}</strong> tiket</span>
+          <span *ngIf="currentFilterTotal() > 0" class="filter-total-badge">
+            (dari total {{ currentFilterTotal() }})
+          </span>
+          <span *ngIf="consultService.isLoading()" class="pagination-loading">
+            <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" stroke-dasharray="32" stroke-linecap="round"/>
+            </svg>
+            <span>Memuat...</span>
+          </span>
+        </div>
+
+        <div class="pagination-actions">
+          <button 
+            (click)="goToPrevPage()" 
+            class="btn-page-nav" 
+            [disabled]="consultService.currentPage() === 1 || consultService.isLoading()"
+            title="Ke halaman sebelumnya">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Sebelumnya</span>
+          </button>
+
+          <span class="page-current-pill">
+            Halaman {{ consultService.currentPage() }}
+          </span>
+
+          <button 
+            (click)="goToNextPage()" 
+            class="btn-page-nav" 
+            [disabled]="!consultService.hasMore() || consultService.isLoading()"
+            title="Ke halaman berikutnya">
+            <span>Berikutnya</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

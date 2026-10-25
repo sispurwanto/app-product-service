@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // 1. KOLEKSI: services (Katalog Produk Layanan)
+    // ==========================================
+    // Publik boleh membaca (menampilkan di website), 
+    // tetapi pengunjung tidak boleh mengubah/menghapus produk.
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if false; // Hanya admin melalui Firebase Console
+    }
+
+    // ==========================================
+    // 2. KOLEKSI: consultation_requests (Tiket Konsultasi)
+    // ==========================================
+    match /consultation_requests/{ticketId} {
+      // Bebaskan validasi agar klien/pengunjung bisa submit dengan lancar:
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if true;
+    }
+  }
+}

@@ -1,0 +1,136 @@
+.config-modal {
+  width: 100%;
+  max-width: 680px;
+  background: #0d121f;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-xl);
+  padding: 2.2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fb-fire-icon {
+  font-size: 2rem;
+}
+
+.modal-title {
+  font-size: 1.35rem;
+  color: #ffffff;
+  margin-bottom: 0.2rem;
+}
+
+.modal-sub {
+  font-size: 0.82rem;
+  color: var(--text-sub);
+  margin: 0;
+}
+
+/* Status Banner */
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1.25rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.status-banner.connected {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.status-indicator-dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+}
+
+.status-banner.connected .status-indicator-dot {
+  background: var(--accent-emerald-light);
+  box-shadow: 0 0 10px var(--accent-emerald);
+}
+
+.status-details strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #ffffff;
+}
+
+.status-details p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.form-instruction {
+  font-size: 0.86rem;
+  color: var(--text-sub);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.form-instruction code {
+  color: var(--accent-cyan-light);
+  font-family: var(--font-mono);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.config-field label {
+  display: block;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.action-feedback {
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+  margin-bottom: 1.25rem;
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  color: #fecdd3;
+}
+
+.action-feedback.success {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #a7f3d0;
+}
+
+.config-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+}

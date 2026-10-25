@@ -1,0 +1,40 @@
+<div class="app-layout">
+  <!-- Navbar (Bersih tanpa tombol admin atau config firebase) -->
+  <app-navbar (openTracker)="openTracker()">
+  </app-navbar>
+
+  <!-- Hero Section -->
+  <app-hero></app-hero>
+
+  <!-- Layanan Kami (Produk Jasa dari Firebase Database) -->
+  <app-services (selectService)="onServiceSelected($event)"></app-services>
+
+  <!-- Keahlian Teknologi -->
+  <app-tech-stack></app-tech-stack>
+
+  <!-- Bagaimana Prosesnya? -->
+  <app-workflow></app-workflow>
+
+  <!-- Layanan Berdasarkan Jadwal -->
+  <app-schedule-notice></app-schedule-notice>
+
+  <!-- Layanan Konsultasi (Form Input Keluhan dengan Key WhatsApp) -->
+  <app-consultation-form [preselectedCategory]="selectedCategoryForForm()"></app-consultation-form>
+
+  <!-- Footer Section & Mari Diskusikan CTA -->
+  <app-footer></app-footer>
+
+  <!-- Modal: Cek Status Tiket WA (Untuk Klien) -->
+  <app-request-tracker *ngIf="showTrackerModal()" (close)="closeTracker()">
+  </app-request-tracker>
+
+  <!-- Floating WhatsApp Quick Button -->
+  <a href="#konsultasi" class="floating-wa-btn" title="Konsultasi Cepat via WhatsApp">
+    <div class="wa-btn-pulse"></div>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+      <path
+        d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z" />
+    </svg>
+    <span class="floating-wa-tooltip">Konsultasi WhatsApp</span>
+  </a>
+</div>

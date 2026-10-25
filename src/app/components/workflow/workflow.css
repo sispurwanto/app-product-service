@@ -1,0 +1,94 @@
+.workflow-section {
+  padding: 6rem 0;
+  position: relative;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+}
+
+.step-card {
+  padding: 1.75rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all var(--transition-normal);
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(52, 211, 153, 0.35);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+}
+
+.step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.step-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-emerald-light);
+  letter-spacing: 0.04em;
+}
+
+.step-idx {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.step-indicator-line {
+  height: 2px;
+  background: linear-gradient(90deg, rgba(52, 211, 153, 0.5), transparent);
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.step-dot {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-emerald-light);
+  box-shadow: 0 0 10px var(--accent-emerald);
+}
+
+.step-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+  line-height: 1.35;
+}
+
+.step-desc {
+  font-size: 0.86rem;
+  color: var(--text-sub);
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
