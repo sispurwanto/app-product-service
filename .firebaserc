@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "app-product-service"
+    "default": "app-product-service",
+    "dev": "app-product-service",
+    "prod": "app-product-service"
   }
 }

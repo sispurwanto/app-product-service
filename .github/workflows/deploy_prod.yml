@@ -1,0 +1,48 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create Environments Folder
+        run: mkdir -p src/environments
+
+      - name: Create environment.ts (Base)
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+        run: echo "$ENV_PROD" > src/environments/environment.ts
+
+      - name: Create environment.prod.ts
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+        run: echo "$ENV_PROD" > src/environments/environment.prod.ts
+
+      - name: Create environment.development.ts (Fallback)
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+        run: echo "$ENV_PROD" > src/environments/environment.development.ts
+
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Production
+        run: npm run deploy:prod
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

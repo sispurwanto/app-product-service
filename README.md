@@ -14,6 +14,18 @@ Sebelum menjalankan proyek pertama kali atau setelah clone dari GitHub:
    ```
 2. Sesuaikan konfigurasi Firebase (`apiKey`, `projectId`, dll.) dan nomor WhatsApp Admin pada berkas-berkas tersebut.
 
+## CI/CD Workflow (GitHub Actions)
+Repository ini dilengkapi otomatisasi deployment ke Firebase Hosting via GitHub Actions:
+- **Branch `dev`** ➔ Otomatis deploy ke development via [.github/workflows/deploy_dev.yml](.github/workflows/deploy_dev.yml).
+- **Branch `main` / `master`** ➔ Otomatis deploy ke production via [.github/workflows/deploy_prod.yml](.github/workflows/deploy_prod.yml).
+
+### Konfigurasi GitHub Repository Secrets
+Tambahkan 3 rahasia berikut di **Settings ➔ Secrets and variables ➔ Actions** pada repository GitHub Anda:
+1. `FIREBASE_TOKEN`: Token autentikasi Firebase CI (didapat via perintah `firebase login:ci`).
+2. `ENV_DEV`: Isi lengkap kode dari berkas `src/environments/environment.development.ts`.
+3. `ENV_PROD`: Isi lengkap kode dari berkas `src/environments/environment.prod.ts`.
+
+
 ## Development server
 
 To start a local development server, run:
