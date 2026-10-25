@@ -44,7 +44,7 @@ import { ConsultationRequest } from '../../models/consultation.model';
                 <div class="step-num-icon">2</div>
                 <div>
                   <strong>Tersimpan Aman di Database</strong>
-                  <p>Data tersimpan langsung di Cloud Database Firebase untuk evaluasi teknis tim.</p>
+                  <p>Data tersimpan langsung untuk evaluasi teknis tim.</p>
                 </div>
               </div>
 
